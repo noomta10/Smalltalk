@@ -1,0 +1,45 @@
+Object subclass: #Book
+    instanceVariableNames: 'title author publicationYear numberOfPages'
+    classVariableNames: ''
+    poolDictionaries: ''
+    category: 'Library'
+
+
+!Book methodsFor: 'initialization'!
+
+initializeWithTitle: aTitle author: anAuthor publicationYear: aYear numberOfPages: aPages
+    title := aTitle.
+    author := anAuthor.
+    publicationYear := aYear.
+    numberOfPages := aPages.
+!
+
+
+!Book methodsFor: 'accessing'!
+
+title
+    ^title
+!
+
+author
+    ^author
+!
+
+publicationYear
+    ^publicationYear
+!
+
+numberOfPages
+    ^numberOfPages
+!
+
+
+!Book methodsFor: 'comparing'!
+
+= aBook
+    ^title = aBook title and: [author = aBook author]
+!
+
+| myBook |
+myBook := Book new.
+myBook initializeWithTitle: 'The Great Gatsby' author: 'F. Scott Fitzgerald' publicationYear: 1925 numberOfPages: 218.

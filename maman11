@@ -45,9 +45,150 @@ initializeTitle: aTitle author: anAuthor year: aYear pages: pageCount
     pages := pageCount.! !
 
 
+!Book methodsFor: 'comparing' stamp: 'NT 3/28/2025 16:22'!
+= aBook
+    ^ (title = aBook title) and: [author = aBook author]
+! !
+
+
 !Book methodsFor: 'printing' stamp: 'NT 3/27/2025 18:08'!
 printOn: aStream
 |text|
 text:= (self class name , ' title "', self title, '" by ', self author, ' from ', year printString, ' has ', pages printString, ' pages.').
 aStream nextPutAll: text
 ! !
+
+
+Book subclass: #Biography
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Library'!
+
+
+Object subclass: #BookLibrary
+	instanceVariableNames: 'libraryBooks availableBooks members'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Library'!
+
+!BookLibrary methodsFor: 'accessing' stamp: 'NT 3/28/2025 17:42'!
+availableBooks
+    ^ availableBooks! !
+
+!BookLibrary methodsFor: 'accessing' stamp: 'NT 3/28/2025 17:42'!
+libraryBooks
+    ^ libraryBooks! !
+
+!BookLibrary methodsFor: 'accessing' stamp: 'NT 3/28/2025 17:43'!
+members
+    ^ members! !
+
+
+!BookLibrary methodsFor: 'book-management' stamp: 'NT 3/28/2025 17:46'!
+addBook: aBook
+    libraryBooks add: aBook.
+    availableBooks add: aBook.
+! !
+
+!BookLibrary methodsFor: 'book-management' stamp: 'NT 3/28/2025 17:47'!
+checkTotalBooks
+    ^ libraryBooks size! !
+
+!BookLibrary methodsFor: 'book-management' stamp: 'NT 3/28/2025 17:46'!
+returnBook: aBook
+    availableBooks add: aBook.! !
+
+
+!BookLibrary methodsFor: 'printing' stamp: 'NT 3/28/2025 18:05'!
+print
+    Transcript show: 'Library Books:'; cr.
+    libraryBooks do: [:book |
+        Transcript show: book title; show: ' by '; show: book author; cr.
+    ].
+
+    Transcript show: 'Available Books:'; cr.
+    availableBooks do: [:book |
+        Transcript show: book title; show: ' by '; show: book author; cr.
+    ].
+
+    Transcript show: 'Members:'; cr.
+    members do: [:member |
+        Transcript show: member name; show: ', id: '; show: member id; cr.
+    ].! !
+
+
+!BookLibrary methodsFor: 'member-management' stamp: 'NT 3/28/2025 17:49'!
+borrowBook: aBook byMember: aMember
+    (availableBooks includes: aBook) ifTrue: [
+        availableBooks remove: aBook.
+        aMember borrowBook: aBook.
+    ].! !
+
+!BookLibrary methodsFor: 'member-management' stamp: 'NT 3/28/2025 17:49'!
+registerMember: aMember
+    members add: aMember.! !
+
+
+!BookLibrary methodsFor: 'initialize-release' stamp: 'NT 3/28/2025 17:41'!
+initialize
+    libraryBooks := OrderedCollection new.
+    availableBooks := OrderedCollection new.
+    members := OrderedCollection new.! !
+
+
+Object subclass: #LibraryMember
+	instanceVariableNames: 'name id books'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Library'!
+
+!LibraryMember methodsFor: 'accessing' stamp: 'NT 3/28/2025 17:23'!
+books
+	^books! !
+
+!LibraryMember methodsFor: 'accessing' stamp: 'NT 3/28/2025 17:22'!
+id
+	^id! !
+
+!LibraryMember methodsFor: 'accessing' stamp: 'NT 3/28/2025 17:22'!
+name
+	^name! !
+
+
+!LibraryMember methodsFor: 'book-management' stamp: 'NT 3/28/2025 17:25'!
+borrowBook: aBook
+    books add: aBook.! !
+
+!LibraryMember methodsFor: 'book-management' stamp: 'NT 3/28/2025 17:25'!
+returnBook: aBook
+    books remove: aBook ifAbsent: [].! !
+
+
+!LibraryMember methodsFor: 'printing' stamp: 'NT 3/28/2025 17:57'!
+printOn: aStream
+|text|
+text:= (self class name , ' name: ', self name, ', id: ', self id).
+aStream nextPutAll: text
+! !
+
+
+!LibraryMember methodsFor: 'initialize-release' stamp: 'NT 3/28/2025 17:21'!
+initializeName: aName id: anId
+    name := aName.
+    id := anId.
+    books := OrderedCollection new.! !
+
+
+Book subclass: #Novel
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Library'!
+
+
+Book subclass: #Science
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Library'!

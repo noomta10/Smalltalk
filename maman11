@@ -1,16 +1,53 @@
 Object subclass: #Book
-    instanceVariableNames: 'title author year pages'
-    classVariableNames: ''
-    poolDictionaries: ''
-    category: 'Library'
+	instanceVariableNames: 'title author year pages'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Library'!
+
+!Book methodsFor: 'accessing' stamp: 'NT 3/27/2025 17:10'!
+author
+	^author! !
+
+!Book methodsFor: 'accessing' stamp: 'NT 3/27/2025 16:57'!
+author: anAuthor
+	author := anAuthor! !
+
+!Book methodsFor: 'accessing' stamp: 'NT 3/27/2025 17:10'!
+pages
+	^pages! !
+
+!Book methodsFor: 'accessing' stamp: 'NT 3/27/2025 16:58'!
+pages: pagesCount
+	pages := pagesCount! !
+
+!Book methodsFor: 'accessing' stamp: 'NT 3/27/2025 17:09'!
+title
+	^title! !
+
+!Book methodsFor: 'accessing' stamp: 'NT 3/27/2025 16:55'!
+title: aTitle
+	title := aTitle! !
+
+!Book methodsFor: 'accessing' stamp: 'NT 3/27/2025 17:10'!
+year
+	^year! !
+
+!Book methodsFor: 'accessing' stamp: 'NT 3/27/2025 16:58'!
+year: aYear
+	year := aYear! !
 
 
-!Book methodsFor: 'initialization'!
-
-initializeWithTitle: aTitle author: anAuthor year: aYear pages aPages
+!Book methodsFor: 'initialize-release' stamp: 'NT 3/28/2025 15:51'!
+initializeTitle: aTitle author: anAuthor year: aYear pages: pageCount
     title := aTitle.
     author := anAuthor.
     year := aYear.
-    pages := aPages.
-!
+    pages := pageCount.! !
 
+
+!Book methodsFor: 'printing' stamp: 'NT 3/27/2025 18:08'!
+printOn: aStream
+|text|
+text:= (self class name , ' title "', self title, '" by ', self author, ' from ', year printString, ' has ', pages printString, ' pages.').
+aStream nextPutAll: text
+! !

@@ -80,28 +80,28 @@ solveQueens: aSize
 ! !
 
 
-!Board methodsFor: 'initialize-release' stamp: 'NR 3/3/2025 15:10'!
-initialize
-	self initializeWithSize: 8. ! !
-
 !Board methodsFor: 'initialize-release' stamp: 'NR 3/3/2025 15:02'!
 initialize: piece
 	self initialize: piece size: 8.! !
 
-!Board methodsFor: 'initialize-release' stamp: 'NT 4/24/2025 12:25'!
+!Board methodsFor: 'initialize-release' stamp: 'NT 4/24/2025 14:03'!
 initialize: piece size: aSize
-	size := aSize.
-	lastPiece := PieceTerminator new.
-	(1 to: size) do: [:i | lastPiece := (piece class new setColumn:i boardSize: size neighbour: lastPiece)].! !
+	((aSize isKindOf: Integer) and: [aSize > 0])
+	ifTrue: [
+		size := aSize.
+		lastPiece := PieceTerminator new.
+		(1 to: size) do: [:i | lastPiece := (piece class new setColumn:i boardSize: size neighbour: lastPiece)
+	].
+		]
+	ifFalse: [
+		self error: 'Size should be a positive integer.'
+	].
+	
+	
 
-!Board methodsFor: 'initialize-release' stamp: 'NT 4/23/2025 21:07'!
-initializeWithSize: aSize
-	self initialize: ChessPiece new size: aSize.! !
 
+! !
 
-!Board methodsFor: 'accessing' stamp: 'NT 4/24/2025 12:26'!
-size
-	^ size! !
 
 
 Object subclass: #ChessPiece

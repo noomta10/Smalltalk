@@ -1,107 +1,245 @@
 Object subclass: #Board
-	instanceVariableNames: 'lastQueen'
+	instanceVariableNames: 'size lastPiece'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Chess'!
 
-!Board methodsFor: 'solve' stamp: 'NT 4/7/2025 21:08'!
+!Board methodsFor: 'solve' stamp: 'NT 4/24/2025 12:31'!
 solve
-	| solutionNumber |
+| solutionNumber |
 	Transcript clear.
 	solutionNumber := 1.
 
-	lastQueen firstSolution
+	lastPiece firstSolution
 		ifTrue: [
-			Transcript show: 'Solution ', solutionNumber printString, ': ', lastQueen result printString; cr.
+			Transcript show: 'Solution ', solutionNumber printString, ': ', lastPiece result printString; cr.
 			solutionNumber := solutionNumber + 1.
-			[lastQueen nextSolution]
-				whileTrue: [
-					Transcript show: 'Solution ', solutionNumber printString, ': ', lastQueen result printString; cr.
-					solutionNumber := solutionNumber + 1
-				].
+			[lastPiece nextSolution]
+			whileTrue: [
+				Transcript show: 'Solution ', solutionNumber printString, ': ', lastPiece result printString; cr.
+				solutionNumber := solutionNumber + 1
+			].
 		]
-		ifFalse: [Transcript show: 'No Solution.'; cr].! !
+		ifFalse: [Transcript show: 'No Solution.'; cr].
+! !
+
+!Board methodsFor: 'solve' stamp: 'NT 4/23/2025 20:21'!
+solveBishops: aSize
+	self initialize: Bishop new size: aSize.
+	self solve
+
+! !
+
+!Board methodsFor: 'solve' stamp: 'NT 4/23/2025 20:21'!
+solveKnights: aSize
+	self initialize: Knight new size: aSize.
+	self solve
+
+! !
+
+!Board methodsFor: 'solve' stamp: 'NT 4/23/2025 20:22'!
+solvePrinces: aSize
+	self initialize: Prince new size: aSize.
+	self solve
+
+! !
+
+!Board methodsFor: 'solve' stamp: 'NT 4/23/2025 20:22'!
+solveQueens: aSize
+	self initialize: Queen new size: aSize.
+	self solve
+
+! !
 
 
-!Board methodsFor: 'initialize-release' stamp: 'NT 4/7/2025 20:46'!
+!Board methodsFor: 'initialize-release' stamp: 'NR 3/3/2025 15:10'!
 initialize
-	lastQueen := QueenTerminator new.
-	(1 to: 8)
-	do: [:i | lastQueen := Queen new
-	setColumn: i neighbor: lastQueen]! !
+	self initializeWithSize: 8. ! !
+
+!Board methodsFor: 'initialize-release' stamp: 'NR 3/3/2025 15:02'!
+initialize: piece
+	self initialize: piece size: 8.! !
+
+!Board methodsFor: 'initialize-release' stamp: 'NT 4/24/2025 12:25'!
+initialize: piece size: aSize
+	size := aSize.
+	lastPiece := PieceTerminator new.
+	(1 to: size) do: [:i | lastPiece := (piece class new setColumn:i boardSize: size neighbour: lastPiece)].! !
+
+!Board methodsFor: 'initialize-release' stamp: 'NT 4/23/2025 21:07'!
+initializeWithSize: aSize
+	self initialize: ChessPiece new size: aSize.! !
+
+
+!Board methodsFor: 'accessing' stamp: 'NT 4/24/2025 12:26'!
+size
+	^ size! !
 
 
-Object subclass: #Queen
-	instanceVariableNames: 'row column neighbor'
+Object subclass: #ChessPiece
+	instanceVariableNames: 'row column neighbour boardSize'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Chess'!
 
-!Queen methodsFor: 'as yet unclassified' stamp: 'NT 4/7/2025 20:54'!
+!ChessPiece methodsFor: 'as yet unclassified' stamp: 'NT 4/24/2025 12:27'!
 advance
-	row = 8
-	ifTrue: [neighbor nextSolution
-	ifFalse: [^ false].
-	row := 0].
+	row = boardSize
+		ifTrue: [neighbour nextSolution
+			ifFalse: [^false].
+			row := 0].
 	row := row + 1.
-	^ true! !
+	^true! !
 
-!Queen methodsFor: 'as yet unclassified' stamp: 'NT 4/7/2025 20:53'!
-canAttack: testRow x: testColumn
-	| columnDifference |
-	columnDifference := testColumn - column.
-	((row = testRow
-	or: [row + columnDifference = testRow])
-	or: [row - columnDifference = testRow])
-	ifTrue: [^ true].
-	^ neighbor canAttack: testRow x: testColumn! !
+!ChessPiece methodsFor: 'as yet unclassified' stamp: 'NT 4/23/2025 20:29'!
+canAttack:theRow x:theColumn
+	self subclassResponsibility.! !
 
-!Queen methodsFor: 'as yet unclassified' stamp: 'NT 4/7/2025 20:55'!
+!ChessPiece methodsFor: 'as yet unclassified' stamp: 'NR 3/3/2025 13:49'!
 firstSolution
-	neighbor firstSolution.
-	row _ 1.
-	^ self moveToNextNonAttackedRow! !
+	neighbour firstSolution.
+	row := 1.
+	^self moveToNextNonAttachedRow! !
 
-!Queen methodsFor: 'as yet unclassified' stamp: 'NT 4/7/2025 20:55'!
-moveToNextNonAttackedRow
-	[neighbor canAttack: row x: column]
-	whileTrue: [self advance ifFalse: [^ false]].
-	^ true! !
+!ChessPiece methodsFor: 'as yet unclassified' stamp: 'NR 3/3/2025 14:04'!
+initialize
+	column := 0.! !
 
-!Queen methodsFor: 'as yet unclassified' stamp: 'NT 4/7/2025 20:55'!
+!ChessPiece methodsFor: 'as yet unclassified' stamp: 'NR 3/3/2025 13:55'!
+moveToNextNonAttachedRow
+	[neighbour canAttack: row x: column]
+		whileTrue: [self advance ifFalse: [^false]].
+	^true! !
+
+!ChessPiece methodsFor: 'as yet unclassified' stamp: 'NT 4/23/2025 20:24'!
 nextSolution
-	^ self advance
-	and: [self moveToNextNonAttackedRow]! !
+	^self advance and: [self moveToNextNonAttachedRow]! !
 
-!Queen methodsFor: 'as yet unclassified' stamp: 'NT 4/7/2025 20:56'!
+!ChessPiece methodsFor: 'as yet unclassified' stamp: 'NT 4/23/2025 20:24'!
 result
-	"add row to the list"
-	^ neighbor result addLast: row; yourself! !
+	^neighbour result addLast: row; yourself! !
 
-!Queen methodsFor: 'as yet unclassified' stamp: 'NT 4/7/2025 20:53'!
-setColumn: aColumn neighbor: aQueen
+!ChessPiece methodsFor: 'as yet unclassified' stamp: 'NT 4/24/2025 12:26'!
+setColumn:aColumn boardSize: aSize neighbour:aQueen
 	column := aColumn.
-	neighbor := aQueen! !
+	boardSize := aSize.
+	neighbour := aQueen.! !
+
+!ChessPiece methodsFor: 'as yet unclassified' stamp: 'NT 4/23/2025 20:24'!
+setRow: aRow column: aColumn
+	row := aRow.
+	column := aColumn! !
 
 
-Object subclass: #QueenTerminator
+ChessPiece subclass: #Bishop
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Chess'!
 
-!QueenTerminator methodsFor: 'as yet unclassified' stamp: 'NT 4/7/2025 20:59'!
+!Bishop methodsFor: 'as yet unclassified' stamp: 'NT 4/23/2025 20:26'!
+canAttack: theRow x: theColumn
+	| rowDiff colDiff |
+	rowDiff := (row - theRow) abs.
+	colDiff := (column - theColumn) abs.
+
+	(rowDiff = colDiff) ifTrue: [^ true].
+
+	^ neighbour canAttack: theRow x: theColumn.
+! !
+
+!Bishop methodsFor: 'as yet unclassified' stamp: 'NT 4/23/2025 20:26'!
+oneCanAttack: theRow x: theColumn
+	| rowDiff colDiff |
+	rowDiff := (row - theRow) abs.
+	colDiff := (column - theColumn) abs.
+
+	^(rowDiff = colDiff)
+
+! !
+
+
+ChessPiece subclass: #Knight
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Chess'!
+
+!Knight methodsFor: 'as yet unclassified' stamp: 'NT 4/23/2025 20:26'!
+canAttack: theRow x: theColumn
+	| rowDiff colDiff |
+	rowDiff := (row - theRow) abs.
+	colDiff := (column - theColumn) abs.
+
+	((rowDiff = 2 and: colDiff = 1) or: (rowDiff = 1 and: colDiff = 2))
+		ifTrue: [^ true].
+
+	^ neighbour canAttack: theRow x: theColumn.! !
+
+!Knight methodsFor: 'as yet unclassified' stamp: 'NT 4/23/2025 20:27'!
+oneCanAttack: theRow x: theColumn
+	| rowDiff colDiff |
+	rowDiff := (row - theRow) abs.
+	colDiff := (column - theColumn) abs.
+
+	^((rowDiff = 2 and: colDiff = 1) or: (rowDiff = 1 and: colDiff = 2))
+
+! !
+
+
+Object subclass: #PieceTerminator
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Chess'!
+
+!PieceTerminator methodsFor: 'as yet unclassified' stamp: 'NR 3/3/2025 14:18'!
 canAttack: testRow x: testColumn
 	^ false! !
 
-!QueenTerminator methodsFor: 'as yet unclassified' stamp: 'NT 4/7/2025 20:59'!
+!PieceTerminator methodsFor: 'as yet unclassified' stamp: 'NR 3/3/2025 14:18'!
 firstSolution
 	^ true! !
 
-!QueenTerminator methodsFor: 'as yet unclassified' stamp: 'NT 4/7/2025 20:59'!
+!PieceTerminator methodsFor: 'as yet unclassified' stamp: 'NR 3/3/2025 14:18'!
 nextSolution
 	^ false! !
 
-!QueenTerminator methodsFor: 'as yet unclassified' stamp: 'NT 4/7/2025 20:59'!
+!PieceTerminator methodsFor: 'as yet unclassified' stamp: 'NR 3/3/2025 14:19'!
 result
 	^ OrderedCollection new! !
+
+
+ChessPiece subclass: #Prince
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Chess'!
+
+!Prince methodsFor: 'as yet unclassified' stamp: 'NT 4/23/2025 20:27'!
+canAttack: theRow x: theColumn
+	((Bishop new setRow: row column: column) oneCanAttack: theRow x: theColumn) ifTrue: [^true].
+	((Knight new setRow: row column: column) oneCanAttack: theRow x: theColumn) ifTrue: [^true].
+
+	^ neighbour canAttack: theRow x: theColumn
+
+
+! !
+
+
+ChessPiece subclass: #Queen
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Chess'!
+
+!Queen methodsFor: 'as yet unclassified' stamp: 'NT 4/24/2025 12:29'!
+canAttack:theRow x:theColumn
+	|diff|
+	diff :=  column - theColumn.
+	(theRow = row or:
+	[row + diff = theRow] or:
+	[row - diff = theRow] )
+		ifTrue: [^true].
+
+	^neighbour canAttack:theRow x:theColumn ! !

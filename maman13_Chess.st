@@ -24,8 +24,22 @@ solve
 ! !
 
 !Board methodsFor: 'solve' stamp: 'NT 4/23/2025 20:21'!
+solveBishops
+	self initialize: Bishop new.
+	self solve
+
+! !
+
+!Board methodsFor: 'solve' stamp: 'NT 4/23/2025 20:21'!
 solveBishops: aSize
 	self initialize: Bishop new size: aSize.
+	self solve
+
+! !
+
+!Board methodsFor: 'solve' stamp: 'NT 4/23/2025 20:21'!
+solveKnights
+	self initialize: Knight new.
 	self solve
 
 ! !
@@ -38,8 +52,22 @@ solveKnights: aSize
 ! !
 
 !Board methodsFor: 'solve' stamp: 'NT 4/23/2025 20:22'!
+solvePrinces
+	self initialize: Prince new.
+	self solve
+
+! !
+
+!Board methodsFor: 'solve' stamp: 'NT 4/23/2025 20:22'!
 solvePrinces: aSize
 	self initialize: Prince new size: aSize.
+	self solve
+
+! !
+
+!Board methodsFor: 'solve' stamp: 'NT 4/23/2025 20:22'!
+solveQueens
+	self initialize: Queen new.
 	self solve
 
 ! !

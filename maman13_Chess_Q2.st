@@ -2,7 +2,7 @@ Object subclass: #Board
 	instanceVariableNames: 'size lastPiece'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'Chess'!
+	category: 'Chess-Q2'!
 
 !Board methodsFor: 'solve' stamp: 'NT 4/24/2025 12:31'!
 solve
@@ -96,6 +96,7 @@ initialize: piece size: aSize
 	ifFalse: [
 		self error: 'Size should be a positive integer.'
 	].
+
 	
 	
 
@@ -103,12 +104,22 @@ initialize: piece size: aSize
 ! !
 
 
+!Board methodsFor: 'as yet unclassified' stamp: 'NT 4/26/2025 21:05'!
+initializeWithRestricted: restrictedSquares
+	lastPiece := PieceTerminator new.
+	(1 to: size) do: [:i | lastPiece := (Queen new
+	setColumn:i neighbour: lastPiece restricted: restrictedSquares asSet)]! !
+
+!Board methodsFor: 'as yet unclassified' stamp: 'NT 4/26/2025 21:07'!
+restricted: restrictedSquares
+	^ self new initializeWithRestricted: restrictedSquares! !
+
 
 Object subclass: #ChessPiece
 	instanceVariableNames: 'row column neighbour boardSize'
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'Chess'!
+	category: 'Chess-Q2'!
 
 !ChessPiece methodsFor: 'as yet unclassified' stamp: 'NT 4/24/2025 12:27'!
 advance
@@ -163,7 +174,7 @@ ChessPiece subclass: #Bishop
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'Chess'!
+	category: 'Chess-Q2'!
 
 !Bishop methodsFor: 'as yet unclassified' stamp: 'NT 4/23/2025 20:26'!
 canAttack: theRow x: theColumn
@@ -187,11 +198,69 @@ oneCanAttack: theRow x: theColumn
 ! !
 
 
+Morph subclass: #GraphicBoard
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Chess-Q2'!
+
+!GraphicBoard methodsFor: 'as yet unclassified' stamp: 'NT 4/26/2025 20:45'!
+open
+	| size squareSize |
+	size := 8.
+	squareSize := 40.
+	self color: Color white.
+	self extent: (squareSize * size) @ (squareSize * size).
+
+	1 to: size do: [:row |
+	    1 to: size do: [:col |
+	        | square color |
+	        square := Square new.
+	        color := (row + col) even ifTrue: [Color white] ifFalse: [Color black].
+	        square baseColor: color.
+	        square bounds: (((col - 1) * squareSize) @ ((row - 1) * squareSize) extent: squareSize @ squareSize).
+		  square setRow: row column: col.
+	        self addMorph: square.
+	    ]
+	].
+
+	self openInWorld.! !
+
+!GraphicBoard methodsFor: 'as yet unclassified' stamp: 'NT 4/26/2025 20:48'!
+open: size
+	| squareSize |
+	squareSize := 40.
+	self color: Color white.
+	self extent: (squareSize * size) @ (squareSize * size).
+	
+	1 to: size do: [:row |
+	    1 to: size do: [:col |
+	        | square color |
+	        square := Square new.
+	        color := (row + col) even ifTrue: [Color white] ifFalse: [Color black].
+	        square baseColor: color.
+	        square bounds: (((col - 1) * squareSize) @ ((row - 1) * squareSize) extent: squareSize @ squareSize).
+		  square setRow: row column: col.
+	        self addMorph: square.
+	    ]
+	].
+
+	self openInWorld.! !
+
+!GraphicBoard methodsFor: 'as yet unclassified' stamp: 'NT 4/26/2025 20:45'!
+restrictedSquares
+	| restrictedSquares |
+	restrictedSquares := Set new.
+	self submorphs do: [:aSquare |
+	aSquare isRestricted ifTrue: [restrictedSquares add: aSquare coordinate]].
+	^ restrictedSquares! !
+
+
 ChessPiece subclass: #Knight
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'Chess'!
+	category: 'Chess-Q2'!
 
 !Knight methodsFor: 'as yet unclassified' stamp: 'NT 4/23/2025 20:26'!
 canAttack: theRow x: theColumn
@@ -219,7 +288,7 @@ Object subclass: #PieceTerminator
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'Chess'!
+	category: 'Chess-Q2'!
 
 !PieceTerminator methodsFor: 'as yet unclassified' stamp: 'NR 3/3/2025 14:18'!
 canAttack: testRow x: testColumn
@@ -242,7 +311,7 @@ ChessPiece subclass: #Prince
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'Chess'!
+	category: 'Chess-Q2'!
 
 !Prince methodsFor: 'as yet unclassified' stamp: 'NT 4/23/2025 20:27'!
 canAttack: theRow x: theColumn
@@ -259,7 +328,7 @@ ChessPiece subclass: #Queen
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
-	category: 'Chess'!
+	category: 'Chess-Q2'!
 
 !Queen methodsFor: 'as yet unclassified' stamp: 'NT 4/24/2025 12:29'!
 canAttack:theRow x:theColumn
@@ -271,3 +340,45 @@ canAttack:theRow x:theColumn
 		ifTrue: [^true].
 
 	^neighbour canAttack:theRow x:theColumn ! !
+
+
+Morph subclass: #Square
+	instanceVariableNames: 'restricted baseColor row column'
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Chess-Q2'!
+
+!Square methodsFor: 'as yet unclassified' stamp: 'NT 4/26/2025 20:42'!
+baseColor: aColor
+    baseColor := aColor.
+    self color: baseColor.! !
+
+!Square methodsFor: 'as yet unclassified' stamp: 'NT 4/26/2025 20:42'!
+coordinate
+
+    ^ Array with: row with: column! !
+
+!Square methodsFor: 'as yet unclassified' stamp: 'NT 4/26/2025 20:43'!
+initialize
+
+    super initialize.
+
+    restricted := false.! !
+
+!Square methodsFor: 'as yet unclassified' stamp: 'NT 4/26/2025 20:44'!
+isRestricted
+	^ restricted! !
+
+!Square methodsFor: 'as yet unclassified' stamp: 'NT 4/26/2025 20:44'!
+mouseDown: event
+	restricted := restricted not.
+	self color: (restricted ifTrue: [Color red] ifFalse: [baseColor]).
+
+    	! !
+
+!Square methodsFor: 'as yet unclassified' stamp: 'NT 4/26/2025 20:43'!
+setRow: aRow column: aColumn
+
+row := aRow.
+
+column := aColumn.! !

@@ -1,5 +1,5 @@
 Object subclass: #Board
-	instanceVariableNames: 'lastQueen restricted'
+	instanceVariableNames: 'lastQueen'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Chess-Q1'!
@@ -7,12 +7,11 @@ Object subclass: #Board
 This class represents the chessboard and manages the solving process for the Eight Queens problem, considering restricted squares.!
 
 
-!Board methodsFor: 'initialization' stamp: 'NT 4/26/2025 18:59'!
+!Board methodsFor: 'initialization' stamp: 'NT 4/26/2025 19:05'!
 initializeWithRestricted: restrictedSquares
-	restricted := restrictedSquares asSet.
 	lastQueen := QueenTerminator new.
 	(1 to: 8) do: [:i | lastQueen := (Queen new
-	setColumn:i neighbour: lastQueen restricted: restricted)]! !
+	setColumn:i neighbour: lastQueen restricted: restrictedSquares asSet)]! !
 
 
 !Board methodsFor: 'solving' stamp: 'NT 4/26/2025 18:59'!

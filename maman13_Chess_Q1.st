@@ -1,86 +1,4 @@
-Morph subclass: #GraphicBoard
-	instanceVariableNames: ''
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Chess-Q1'!
-
-!GraphicBoard methodsFor: 'as yet unclassified' stamp: 'NT 4/26/2025 14:11'!
-open
-
-| size squareSize |
-
-size := 8.
-
-squareSize := 40.
-
-
-
-self color: Color white.
-
-self extent: (squareSize * size) @ (squareSize * size).
-
-
-
-1 to: size do: [:row |
-
-    1 to: size do: [:col |
-
-        | square color |
-
-        square := Square new.
-
-        color := (row + col) even ifTrue: [Color white] ifFalse: [Color black].
-
-        square baseColor: color.
-
-        square bounds: (((col - 1) * squareSize) @ ((row - 1) * squareSize) extent: squareSize @ squareSize).
-
-  square setRow: row column: col.
-
-        self addMorph: square.
-
-    ]
-
-].
-
-
-
-self openInWorld.! !
-
-!GraphicBoard methodsFor: 'as yet unclassified' stamp: 'NT 4/26/2025 14:36'!
-restrictedSquares
-
-| restrictedSquares |
-
-restrictedSquares := Set new.
-
-self submorphs do: [:aSquare |
-
-aSquare isRestricted ifTrue: [restrictedSquares add: aSquare coordinate]].
-
-^ restrictedSquares
-
-
-! !
-
-!GraphicBoard methodsFor: 'as yet unclassified' stamp: 'NT 4/26/2025 14:15'!
-showRestrictedSquares
-
-| restrictedSquares |
-
-restrictedSquares := Set new.
-
-self submorphs do: [:aSquare |
-
-aSquare isRestricted ifTrue: [restrictedSquares add: aSquare coordinate]].
-
-Transcript show: 'Restricted squares: ', restrictedSquares asString; cr.
-
-
-! !
-
-
-GraphicBoard subclass: #Board
+Object subclass: #Board
 	instanceVariableNames: 'lastQueen restricted'
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -89,48 +7,32 @@ GraphicBoard subclass: #Board
 This class represents the chessboard and manages the solving process for the Eight Queens problem, considering restricted squares.!
 
 
-!Board methodsFor: 'initialization' stamp: 'RM 4/24/2025 17:01'!
+!Board methodsFor: 'initialization' stamp: 'NT 4/26/2025 18:59'!
 initializeWithRestricted: restrictedSquares
-
-restricted := restrictedSquares asSet.
-
-lastQueen := QueenTerminator new.
-
-(1 to: 8) do: [:i | lastQueen := (Queen new
-
-setColumn:i neighbour: lastQueen restricted: restricted)]! !
+	restricted := restrictedSquares asSet.
+	lastQueen := QueenTerminator new.
+	(1 to: 8) do: [:i | lastQueen := (Queen new
+	setColumn:i neighbour: lastQueen restricted: restricted)]! !
 
 
-!Board methodsFor: 'solving' stamp: 'NT 4/26/2025 11:31'!
+!Board methodsFor: 'solving' stamp: 'NT 4/26/2025 18:59'!
 solve
-
-| solutionNumber |
-
-Transcript clear.
-
-solutionNumber := 1.
-
-lastQueen firstSolution
-
-ifTrue: [Transcript show: 'Solution ', solutionNumber printString, ': ', lastQueen result printString; cr.
-
-solutionNumber := solutionNumber + 1.
-
-[lastQueen nextSolution]
-
-whileTrue: [Transcript show: 'Solution ', solutionNumber printString, ': ', lastQueen result printString; cr.
-
-solutionNumber := solutionNumber + 1].
-
-Transcript show: 'End of Solutions.'; cr]
-
-ifFalse: [Transcript show: 'No Solution.'; cr]! !
+	| solutionNumber |
+	Transcript clear.
+	solutionNumber := 1.
+	lastQueen firstSolution
+	ifTrue: [Transcript show: 'Solution ', solutionNumber printString, ': ', lastQueen result printString; cr.
+	solutionNumber := solutionNumber + 1.
+	[lastQueen nextSolution]
+	whileTrue: [Transcript show: 'Solution ', solutionNumber printString, ': ', lastQueen result printString; cr.
+	solutionNumber := solutionNumber + 1].
+	Transcript show: 'End of Solutions.'; cr]
+	ifFalse: [Transcript show: 'No Solution.'; cr]! !
 
 
-!Board methodsFor: 'instance creation' stamp: 'RM 4/24/2025 17:01'!
+!Board methodsFor: 'instance creation' stamp: 'NT 4/26/2025 18:59'!
 restricted: restrictedSquares
-
-^ self new initializeWithRestricted: restrictedSquares! !
+	^ self new initializeWithRestricted: restrictedSquares! !
 
 "-- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- "!
 
@@ -141,6 +43,57 @@ Board class
 restricted: restrictedSquares
 
 ^ self new initializeWithRestricted: restrictedSquares! !
+
+
+Morph subclass: #GraphicBoard
+	instanceVariableNames: ''
+	classVariableNames: ''
+	poolDictionaries: ''
+	category: 'Chess-Q1'!
+
+!GraphicBoard methodsFor: 'as yet unclassified' stamp: 'NT 4/26/2025 19:01'!
+open
+	| size squareSize |
+	size := 8.
+	squareSize := 40.
+	self color: Color white.
+	self extent: (squareSize * size) @ (squareSize * size).
+
+	1 to: size do: [:row |
+	    1 to: size do: [:col |
+	        | square color |
+	        square := Square new.
+	        color := (row + col) even ifTrue: [Color white] ifFalse: [Color black].
+	        square baseColor: color.
+	        square bounds: (((col - 1) * squareSize) @ ((row - 1) * squareSize) extent: squareSize @ squareSize).
+		  square setRow: row column: col.
+	        self addMorph: square.
+	    ]
+	].
+
+	self openInWorld.! !
+
+!GraphicBoard methodsFor: 'as yet unclassified' stamp: 'NT 4/26/2025 19:01'!
+restrictedSquares
+	| restrictedSquares |
+	restrictedSquares := Set new.
+	self submorphs do: [:aSquare |
+	aSquare isRestricted ifTrue: [restrictedSquares add: aSquare coordinate]].
+	^ restrictedSquares
+
+
+! !
+
+!GraphicBoard methodsFor: 'as yet unclassified' stamp: 'NT 4/26/2025 19:02'!
+showRestrictedSquares
+	| restrictedSquares |
+	restrictedSquares := Set new.
+	self submorphs do: [:aSquare |
+	aSquare isRestricted ifTrue: [restrictedSquares add: aSquare coordinate]].
+	Transcript show: 'Restricted squares: ', restrictedSquares asString; cr.
+
+
+! !
 
 
 Object subclass: #Queen
